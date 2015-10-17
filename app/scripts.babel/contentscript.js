@@ -1,5 +1,23 @@
 'use strict'
 
+let APP_ID = 'cosmic-questions-' + Math.random().toString(31).substr(2,8);
+let style = document.createElement('style');
+style.innerHTML = `
+    #${APP_ID} {
+        font-family:Georgia,serif;
+        font-size:12px;
+        line-height:1.75;
+    }
+
+    #${APP_ID} ul {
+        padding-left:20px;
+    }
+
+    #${APP_ID} li {
+        padding:initial;
+    }
+`;
+
 function acceptNodeFn(node) {
     return /\?/.test(node.textContent)
 }
@@ -11,7 +29,11 @@ function run() {
     while (node) {
         let text = node.textContent
         let name = node.parentElement.nodeName
-        if (['SCRIPT', 'STYLE'].indexOf(name) === -1) {
+        if (['SCRIPT', 'STYLE'].indexOf(name) >= 0) {
+            // Ignore
+        } else if (/^http\S+$/.test(text)) {
+            // Ignore
+        } else {
             node.parentElement.style.borderBottom = '3px solid gold'
             // node.parentElement.style.color = 'white'
             questions.push(text)
@@ -20,6 +42,7 @@ function run() {
     }
 
     let div = document.createElement('div')
+    div.id = APP_ID
     div.style.position = 'fixed'
     div.style.left = '50%'
     div.style.bottom = '20px'
@@ -41,6 +64,7 @@ function run() {
 
     div.innerHTML = html
 
+    document.head.appendChild(style)
     document.body.appendChild(div)
     document.getElementById('cq-close').onclick = (e) => {
         div.remove()
