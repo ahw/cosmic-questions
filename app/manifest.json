@@ -34,6 +34,7 @@
         "https://*/*"
       ],
       "js": [
+        "scripts/question-parser.js",
         "scripts/contentscript.js"
       ],
       "run_at": "document_end",

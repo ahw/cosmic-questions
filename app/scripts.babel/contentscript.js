@@ -27,16 +27,10 @@ function run() {
     let node = walker.nextNode()
     let questions = []
     while (node) {
-        let text = node.textContent
-        let name = node.parentElement.nodeName
-        if (['SCRIPT', 'STYLE'].indexOf(name) >= 0) {
-            // Ignore
-        } else if (/^http\S+$/.test(text)) {
-            // Ignore
-        } else {
-            node.parentElement.style.borderBottom = '3px solid gold'
-            // node.parentElement.style.color = 'white'
-            questions.push(text)
+        var questionText = QuestionParser.getQuestionText(node);
+        if (questionText) {
+            node.parentElement.style.borderBottom = '3px solid gold';
+            questions.push(questionText);
         }
         node = walker.nextNode()
     }
