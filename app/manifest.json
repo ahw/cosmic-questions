@@ -34,6 +34,7 @@
         "https://*/*"
       ],
       "js": [
+        "scripts/initialize.js",
         "scripts/question-parser.js",
         "scripts/contentscript.js"
       ],

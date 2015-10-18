@@ -1,0 +1,1 @@
+window.CosmicQuestions = window.CosmicQuestions || {};

@@ -1,5 +1,8 @@
 'use strict'
 
+// TODO: Use Browserify and make this not a global
+let QuestionParser = window.CosmicQuestions.QuestionParser;
+
 let APP_ID = 'cosmic-questions-' + Math.random().toString(31).substr(2,8);
 let style = document.createElement('style');
 style.innerHTML = `

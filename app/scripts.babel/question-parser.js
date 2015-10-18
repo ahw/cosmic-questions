@@ -1,4 +1,4 @@
-window.QuestionParser = (function() {
+window.CosmicQuestions.QuestionParser = (function() {
     function getQuestionText(node) {
         let parentTagName = node.parentElement.nodeName;
         if (!/\?/.test(node.textContent)) {
@@ -21,6 +21,5 @@ window.QuestionParser = (function() {
         getQuestionText: getQuestionText
     };
 
-    console.log('this is question-parser', exports);
     return exports;
 })();
