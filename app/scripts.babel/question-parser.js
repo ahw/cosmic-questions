@@ -13,7 +13,22 @@ window.CosmicQuestions.QuestionParser = (function() {
             return null;
         } else {
             // Start parsing
-            return node.textContent;
+            let wrappedNode = document.createElement('span');
+            let questionText = node.textContent;
+            wrappedNode.id = Math.random(31).toString().substr(2, 16);
+            wrappedNode.setAttribute('class', 'cosmic-question');
+            wrappedNode.innerHTML = node.textContent;
+            let mutation = () => {
+                node.parentElement.replaceChild(wrappedNode, node);
+                setTimeout(() => {
+                    wrappedNode.style.background = '#D8DBFF';
+                }, 10);
+            };
+            return [{
+                text: questionText,
+                wrappedNode: wrappedNode,
+                mutation: mutation
+            }];
         }
     }
 

@@ -29,14 +29,20 @@ function run() {
     let walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {acceptNode: acceptNodeFn})
     let node = walker.nextNode()
     let questions = []
+    let mutations = []
     while (node) {
-        var questionText = QuestionParser.getQuestionText(node);
-        if (questionText) {
-            node.parentElement.style.borderBottom = '3px solid gold';
-            questions.push(questionText);
+        var results = QuestionParser.getQuestionText(node);
+        if (results) {
+            // node.parentElement.style.borderBottom = '3px solid gold';
+            results.map((result) => {
+                questions.push(result.text);
+                mutations.push(result.mutation);
+            });
         }
         node = walker.nextNode()
     }
+
+    mutations.map((mutation) => { mutation.call(); });
 
     let div = document.createElement('div')
     div.id = APP_ID
