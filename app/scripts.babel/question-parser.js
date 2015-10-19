@@ -1,4 +1,6 @@
-window.CosmicQuestions.QuestionParser = (function() {
+let _ = window._;
+
+let QuestionParser = (function() {
     function getQuestionText(node) {
         let parentTagName = node.parentElement.nodeName;
         if (!/\?/.test(node.textContent)) {
@@ -31,7 +33,7 @@ window.CosmicQuestions.QuestionParser = (function() {
                     }
                 }
 
-                let debouncedListener = window.CosmicQuestions._.debounce(scrollListener, 300);
+                let debouncedListener = _.debounce(scrollListener, 300);
                 document.addEventListener('scroll', debouncedListener);
             };
             return [{

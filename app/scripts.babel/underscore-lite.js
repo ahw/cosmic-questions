@@ -1,4 +1,4 @@
-window.CosmicQuestions._ = (function() {
+window._ = (function() {
     let _ = {};
     _.now = Date.valueOf;
     _.debounce = function(func, wait, immediate) {

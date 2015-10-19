@@ -1,8 +1,8 @@
 'use strict';
 
 // TODO: Use Browserify and make this not a global
-let QuestionParser = window.CosmicQuestions.QuestionParser;
-let _ = window.CosmicQuestions._;
+let QuestionParser = window.QuestionParser;
+let _ = window._;
 
 let APP_ID = 'cosmic-questions-' + Math.random().toString(31).substr(2,8);
 let style = document.createElement('style');
@@ -122,14 +122,14 @@ function run() {
 
     div.innerHTML = html
 
-    document.head.appendChild(style)
+    // document.head.appendChild(style)
     // document.body.appendChild(div)
-    document.getElementById(`close-link-${APP_ID}`).onclick = (e) => {
-        div.remove()
-    }
-    document.getElementById(`sidebar-toggle-${APP_ID}`).onclick = (e) => {
-        div.style.width = 0;
-    }
+    // document.getElementById(`close-link-${APP_ID}`).onclick = (e) => {
+    //     div.remove()
+    // }
+    // document.getElementById(`sidebar-toggle-${APP_ID}`).onclick = (e) => {
+    //     div.style.width = 0;
+    // }
 }
 
 // let t0 = Date.now();
