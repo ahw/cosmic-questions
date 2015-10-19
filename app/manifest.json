@@ -35,6 +35,7 @@
       ],
       "js": [
         "scripts/initialize.js",
+        "scripts/underscore-lite.js",
         "scripts/question-parser.js",
         "scripts/contentscript.js"
       ],

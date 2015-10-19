@@ -20,9 +20,19 @@ window.CosmicQuestions.QuestionParser = (function() {
             wrappedNode.innerHTML = node.textContent;
             let mutation = () => {
                 node.parentElement.replaceChild(wrappedNode, node);
-                setTimeout(() => {
-                    wrappedNode.style.background = '#D8DBFF';
-                }, 10);
+                let scrollListener = (e) => {
+                    let top = wrappedNode.getBoundingClientRect().top;
+                    console.log('testing visibility...');
+                    if (top > 0 && top <= window.innerHeight * 0.75) {
+                        // wrappedNode.style.border = '1px solid black';
+                        wrappedNode.style.background = '#FEF83C';
+                        document.removeEventListener('scroll', debouncedListener);
+                        console.log('removing debounced listener');
+                    }
+                }
+
+                let debouncedListener = window.CosmicQuestions._.debounce(scrollListener, 300);
+                document.addEventListener('scroll', debouncedListener);
             };
             return [{
                 text: questionText,

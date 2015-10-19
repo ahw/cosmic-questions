@@ -2,6 +2,7 @@
 
 // TODO: Use Browserify and make this not a global
 let QuestionParser = window.CosmicQuestions.QuestionParser;
+let _ = window.CosmicQuestions._;
 console.log('hello');
 
 let APP_ID = 'cosmic-questions-' + Math.random().toString(31).substr(2,8);
@@ -22,22 +23,28 @@ style.innerHTML = `
     padding: 10px;
     border-left: 1px solid black;
     overflow:scroll;
+    box-sizing:border-box;
+}
+
+#question-list-${APP_ID} {
+    overflow:scroll;
+    height: 100%;
+    transition:500ms;
 }
 
 #sidebar-toggle-${APP_ID} {
     height: 100%;
-    width: 5px;
-    background: black;
+    width: 10px;
+    background: black;;
     position: absolute;
     left:0;
     top:0;
     bottom:0;
+    border-right:1px solid black;
 }
 
 #sidebar-toggle-${APP_ID}:hover {
-    height: 100%;
-    width: 5px;
-    background: yellow;
+    background: #FEF83C;
     cursor:pointer;
 }
 
@@ -78,6 +85,7 @@ style.innerHTML = `
 function acceptNodeFn(node) {
     return /\?/.test(node.textContent)
 }
+
 
 function run() {
     let walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {acceptNode: acceptNodeFn})
@@ -124,4 +132,10 @@ function run() {
     }
 }
 
-setTimeout(run, 1000)
+// let t0 = Date.now();
+// console.log('now is ' + t0);
+window.addEventListener('load', () => {
+    // console.log('load took ' + (Date.now() - t0) + 'ms');
+    // console.log('running in 1000ms');
+    setTimeout(run, 1000);
+})
