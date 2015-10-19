@@ -3,7 +3,6 @@
 // TODO: Use Browserify and make this not a global
 let QuestionParser = window.CosmicQuestions.QuestionParser;
 let _ = window.CosmicQuestions._;
-console.log('hello');
 
 let APP_ID = 'cosmic-questions-' + Math.random().toString(31).substr(2,8);
 let style = document.createElement('style');
@@ -104,6 +103,7 @@ function run() {
         node = walker.nextNode()
     }
 
+    questions.map((text, index) => { console.log(index + '. ' + text); });
     mutations.map((mutation) => { mutation.call(); });
 
     let div = document.createElement('div')
@@ -123,7 +123,7 @@ function run() {
     div.innerHTML = html
 
     document.head.appendChild(style)
-    document.body.appendChild(div)
+    // document.body.appendChild(div)
     document.getElementById(`close-link-${APP_ID}`).onclick = (e) => {
         div.remove()
     }
