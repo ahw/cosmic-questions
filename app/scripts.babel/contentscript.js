@@ -99,6 +99,9 @@ function run() {
                 questions.push(result.text);
                 mutations.push(result.mutation);
             });
+            console.log(results.map((result) => {
+                return result.wrappedHtml;
+            }).join(""));
         }
         node = walker.nextNode()
     }
