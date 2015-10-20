@@ -89,42 +89,42 @@ function acceptNodeFn(node) {
 function run() {
     let walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {acceptNode: acceptNodeFn})
     let node = walker.nextNode()
-    let questions = []
-    let mutations = []
+    let questions = [];
+    let mutations = [];
     while (node) {
-        var results = QuestionParser.getQuestionText(node);
+        let results = QuestionParser.getQuestionText(node);
         if (results) {
+            questions = questions.concat(results);
             // node.parentElement.style.borderBottom = '3px solid gold';
-            results.map((result) => {
-                questions.push(result.text);
-                mutations.push(result.mutation);
+            results.map((question) => {
+                // mutations.push(result.mutation);
+                // TODO: Push mutation here.
             });
-            console.log(results.map((result) => {
-                return result.wrappedHtml;
-            }).join(""));
+            // console.log(question.map((question) => {
+            //     return result.wrappedHtml;
+            // }).join(""));
         }
         node = walker.nextNode()
     }
 
-    questions.map((text, index) => { console.log(index + '. ' + text); });
-    mutations.map((mutation) => { mutation.call(); });
+    questions.map((question, index) => { console.log((index+1) + '. ' + question.text); });
+    // mutations.map((mutation) => { mutation.call(); });
 
-    let div = document.createElement('div')
-    div.id = APP_ID
+    chrome.runtime.sendMessage({questions: questions, host: window.location.host}, console.warn.bind(console, 'Response:'));
+
+    // let div = document.createElement('div')
+    // div.id = APP_ID
     // div.style.width = '50%'
-
-    let html = `
-    <div id="sidebar-toggle-${APP_ID}"></div>
-    <a id="close-link-${APP_ID}" style="float:right" href="#">Close</a>
-    <div id="question-list-${APP_ID}">
-        <ul>
-            ${questions.map((str) => { return "<li>" + str + "</li>" }).join("")}
-        </ul>
-    </div>
-    `
-
-    div.innerHTML = html
-
+    // let html = `
+    // <div id="sidebar-toggle-${APP_ID}"></div>
+    // <a id="close-link-${APP_ID}" style="float:right" href="#">Close</a>
+    // <div id="question-list-${APP_ID}">
+    //     <ul>
+    //         ${questions.map((str) => { return "<li>" + str + "</li>" }).join("")}
+    //     </ul>
+    // </div>
+    // `
+    // div.innerHTML = html
     // document.head.appendChild(style)
     // document.body.appendChild(div)
     // document.getElementById(`close-link-${APP_ID}`).onclick = (e) => {
