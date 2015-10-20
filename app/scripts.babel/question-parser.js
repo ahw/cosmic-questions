@@ -94,7 +94,7 @@ let QuestionParser = (function() {
             // Should have already been checked, but just in case. Questions
             // must contain question marks.
             return null;
-        } if (['SCRIPT', 'STYLE'].indexOf(parentTagName) >= 0) {
+        } if (['SCRIPT', 'NOSCRIPT', 'STYLE'].indexOf(parentTagName) >= 0) {
             // Ignore
             return null;
         } else if (/^http\S+$/.test(node.textContent)) {
