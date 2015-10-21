@@ -2,21 +2,58 @@ let _ = window._;
 
 let QuestionParser = (function() {
 
-    function createQuestionObject(options) {
+    function addMutationFunctions(originalNode, questions) {
+        let parentElement = originalNode.parentElement;
+        questions.map((question) => {
+            let mutation = () => {
+                // Carefully replace text originalNode content with mixed content
+                parentElement.innerHTML = parentElement.innerHTML.replace(question.leadingContent + question.text + question.trailingContent, question.wrappedHtml);
+
+                let scrollListener = (e) => {
+                    let questionNode = document.getElementById(question.id);
+                    let top = questionNode.getBoundingClientRect().top;
+                    // console.log(`testing visibility for node with id ${question.id}...`);
+                    if (top > -200 && top <= window.innerHeight * 0.75) {
+                        // Testing for -200 and not zero in order to
+                        // capture questions which appear at the top of
+                        // the page and are thus in view even before the
+                        // first scroll. This logic still won't capture
+                        // questions on pages so short that a scroll
+                        // isn't required, or on pages where the user
+                        // just simply didn't scroll at all.
+
+                        console.log('removing debounced listener for node', questionNode);
+                        setTimeout(() => {
+                            questionNode.style.background = '#FEF83C';
+                            questionNode.style.color = 'black';
+                        }, 1000);
+                        document.removeEventListener('scroll', debouncedListener);
+                    }
+                }
+
+                let debouncedListener = _.debounce(scrollListener, 300);
+                document.addEventListener('scroll', debouncedListener);
+            };
+
+            question.mutation = mutation;
+        });
+    }
+
+    function createQuestionObject({text, leadingContent, trailingContent, isFullQuestion, textNodeStartIndex}) {
+        let id = Math.random().toString(31).substr(2, 8);
         return {
-            text: options.text,
-            isFullQuestion: options.isFullQuestion,
-            textNodeStartIndex: options.textNodeStartIndex,
-            wrappedHtml: `${options.leadingContent || ""}<span class="cosmic-question">${options.text}</span>${options.trailingContent || ""}`
+            id,
+            text,            // question text in isolation
+            leadingContent,  // stuff before the question that isn't the question itself
+            trailingContent, // stuff after the question that isn't the question itself
+            isFullQuestion,  // did parsing stop mid-sentence?
+            textNodeStartIndex,
+            wrappedHtml: `${leadingContent || ""}<span id="${id}" class="cosmic-question">${text}</span>${trailingContent || ""}`
         };
     }
 
-    let parsingStates = {
-        START: 'START',
-        QUESTION: 'QUESTION'
-    };
-
-    function parseQuestionText(text) {
+    function getQuestionObjectsFromText(text) {
+        let parsingStates = { START: 'START', QUESTION: 'QUESTION' };
         let state = parsingStates.START;
         let index = text.length-1;
         let questions = [];
@@ -88,7 +125,7 @@ let QuestionParser = (function() {
         return questions;
     }
 
-    function getQuestionText(node) {
+    function getQuestionObjectsFromNode(node) {
         let parentTagName = node.parentElement.nodeName;
         if (!/\?/.test(node.textContent)) {
             // Should have already been checked, but just in case. Questions
@@ -108,28 +145,17 @@ let QuestionParser = (function() {
             //     let questionMarkIndex = node.textContent.lastIndexOf('?', rightMostIndex);
             //     let nextQuestionMarkIndex = node.textContent.lastIndexOf('?', rightMostIndex-1);
             // }
-            let questions = parseQuestionText(node.textContent);
 
-            let wrappedNode = document.createElement('span');
-            wrappedNode.id = Math.random(31).toString().substr(2, 16);
-            wrappedNode.setAttribute('class', 'cosmic-question');
-            wrappedNode.innerHTML = node.textContent;
-            let mutation = () => {
-                node.parentElement.replaceChild(wrappedNode, node);
-                let scrollListener = (e) => {
-                    let top = wrappedNode.getBoundingClientRect().top;
-                    console.log('testing visibility...');
-                    if (top > 0 && top <= window.innerHeight * 0.75) {
-                        // wrappedNode.style.border = '1px solid black';
-                        wrappedNode.style.background = '#FEF83C';
-                        document.removeEventListener('scroll', debouncedListener);
-                        console.log('removing debounced listener');
-                    }
-                }
+            let questions = getQuestionObjectsFromText(node.textContent);
+            addMutationFunctions(node, questions);
 
-                let debouncedListener = _.debounce(scrollListener, 300);
-                document.addEventListener('scroll', debouncedListener);
-            };
+            // let combinedHtml = questions.map((question) => { return question.wrappedHtml; }).join("");
+
+            // let wrappedNode = document.createElement('span');
+            // wrappedNode.id = Math.random().toString(31).substr(2, 16);
+            // wrappedNode.setAttribute('class', 'cosmic-question');
+            // wrappedNode.innerHTML = node.textContent;
+
             // return [{
             //     text: questionText,
             //     wrappedNode: wrappedNode,
@@ -140,7 +166,7 @@ let QuestionParser = (function() {
     }
 
     let exports = {
-        getQuestionText: getQuestionText
+        getQuestionObjectsFromNode
     };
 
     return exports;

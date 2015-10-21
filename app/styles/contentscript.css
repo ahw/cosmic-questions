@@ -1,3 +1,6 @@
 .cosmic-question {
-    transition: 2s;
+    transition: 1s;
+    /* background:blue; */
+    /* color:white; */
+    /* font-weight:bold; */
 }

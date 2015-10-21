@@ -89,28 +89,22 @@ function acceptNodeFn(node) {
 function run() {
     let walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {acceptNode: acceptNodeFn})
     let node = walker.nextNode()
-    let questions = [];
+    let allQuestions = [];
     let mutations = [];
     while (node) {
-        let results = QuestionParser.getQuestionText(node);
-        if (results) {
-            questions = questions.concat(results);
-            // node.parentElement.style.borderBottom = '3px solid gold';
-            results.map((question) => {
-                // mutations.push(result.mutation);
-                // TODO: Push mutation here.
-            });
-            // console.log(question.map((question) => {
-            //     return result.wrappedHtml;
-            // }).join(""));
+        let questions = QuestionParser.getQuestionObjectsFromNode(node);
+        if (questions) {
+            allQuestions = allQuestions.concat(questions);
         }
         node = walker.nextNode()
     }
 
-    questions.map((question, index) => { console.log((index+1) + '. ' + question.text); });
-    // mutations.map((mutation) => { mutation.call(); });
+    allQuestions.map((question, index) => {
+        console.log((index+1) + '. ' + question.text);
+        question.mutation();
+    });
 
-    chrome.runtime.sendMessage({questions: questions, host: window.location.host}, console.warn.bind(console, 'Response:'));
+    chrome.runtime.sendMessage({allQuestions: allQuestions, host: window.location.host}, console.warn.bind(console, 'Response:'));
 
     // let div = document.createElement('div')
     // div.id = APP_ID
@@ -120,7 +114,7 @@ function run() {
     // <a id="close-link-${APP_ID}" style="float:right" href="#">Close</a>
     // <div id="question-list-${APP_ID}">
     //     <ul>
-    //         ${questions.map((str) => { return "<li>" + str + "</li>" }).join("")}
+    //         ${allQuestions.map((str) => { return "<li>" + str + "</li>" }).join("")}
     //     </ul>
     // </div>
     // `
