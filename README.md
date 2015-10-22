@@ -14,3 +14,7 @@ Desired Features
     - [ ] datetime
     - [ ] exact URL it first appeared on
     - [ ] list of URLs it appeared on?
+- [ ] Provide options for which fields to record
+- [ ] Dashboard page to view data in various formats
+- [ ] Just POST JSON data to localhost:3500 or some other endpoint specified
+  in options (don't try to collect it in chrome.storage
