@@ -4,7 +4,7 @@ let QuestionParser = (function() {
 
     function addMutationFunctions(originalNode, questions) {
         let parentElement = originalNode.parentElement;
-        questions.map((question) => {
+        questions.map((question, index) => {
             let mutation = () => {
                 // Carefully replace text originalNode content with mixed content
                 parentElement.innerHTML = parentElement.innerHTML.replace(question.leadingContent + question.text + question.trailingContent, question.wrappedHtml);
@@ -22,7 +22,11 @@ let QuestionParser = (function() {
                         // isn't required, or on pages where the user
                         // just simply didn't scroll at all.
 
-                        console.log('removing debounced listener for node', questionNode);
+                        // console.log('removing debounced listener for node', questionNode);
+
+                        console.log('POST-ing (' + index + ') ' + question.text);
+                        chrome.runtime.sendMessage({questionList: [question], host: window.location.host, location: window.location}, console.log.bind(console, 'Response:'));
+
                         setTimeout(() => {
                             questionNode.style.background = '#FEF83C';
                             questionNode.style.color = 'black';

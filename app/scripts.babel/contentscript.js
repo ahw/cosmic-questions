@@ -87,6 +87,7 @@ function acceptNodeFn(node) {
 
 
 function run() {
+    // console.log('Running Cosmic Questions');
     let walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {acceptNode: acceptNodeFn})
     let node = walker.nextNode()
     let allQuestions = [];
@@ -100,11 +101,10 @@ function run() {
     }
 
     allQuestions.map((question, index) => {
-        console.log((index+1) + '. ' + question.text);
         question.mutation();
     });
 
-    chrome.runtime.sendMessage({allQuestions: allQuestions, host: window.location.host}, console.warn.bind(console, 'Response:'));
+    // chrome.runtime.sendMessage({questionList: allQuestions, host: window.location.host}, console.log.bind(console, 'Response:'));
 
     // let div = document.createElement('div')
     // div.id = APP_ID
