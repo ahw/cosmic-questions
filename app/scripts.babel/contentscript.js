@@ -101,7 +101,9 @@ function run() {
     }
 
     allQuestions.map((question, index) => {
+        console.log(index + '. ' + question.id + ': ' + question.text);
         question.mutation();
+        question.testVisibilty();
     });
 
     // chrome.runtime.sendMessage({questionList: allQuestions, host: window.location.host}, console.log.bind(console, 'Response:'));
