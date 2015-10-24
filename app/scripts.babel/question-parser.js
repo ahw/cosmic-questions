@@ -24,8 +24,9 @@ let QuestionParser = (function() {
                 let scrollListener = (e) => {
                     let questionNode = document.getElementById(question.id);
                     if (questionNode === null) {
-                        console.warn('Could not find node with id: ' + question.id + ' Removing listener.');
+                        console.warn('Could not find question ' + question.id + ': ' + question.text + ' Removing listener.');
                         document.removeEventListener('scroll', debouncedListener);
+                        return;
                     }
 
                     let top = questionNode.getBoundingClientRect().top;
