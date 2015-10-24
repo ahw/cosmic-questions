@@ -43,7 +43,7 @@ let QuestionParser = (function() {
                         chrome.runtime.sendMessage({questionList: [question], host: window.location.host, location: window.location}, console.log.bind(console, 'Response:'));
 
                         setTimeout(() => {
-                            questionNode.style.background = '#FEF83C';
+                            questionNode.style.backgroundColor = '#FEF83C';
                             questionNode.style.color = 'black';
                         }, 1000);
                         document.removeEventListener('scroll', debouncedListener);
