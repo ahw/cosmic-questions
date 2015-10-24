@@ -1,4 +1,5 @@
 let _ = window._;
+let QuestionRecordKeeper = window.QuestionRecordKeeper;
 
 let QuestionParser = (function() {
 
@@ -12,8 +13,12 @@ let QuestionParser = (function() {
     }
 
     function addMutationFunctions(originalNode, questions) {
-        let parentId = getUniqueId();
-        originalNode.parentElement.setAttribute(DATA_ATTRIBUTE_NAME, parentId);
+        let parentId = originalNode.parentElement.getAttribute(DATA_ATTRIBUTE_NAME); // May already exist
+        if (parentId === null) {
+            parentId = getUniqueId();
+            originalNode.parentElement.setAttribute(DATA_ATTRIBUTE_NAME, parentId);
+        }
+
         questions.forEach((question, index) => {
             let mutation = () => {
                 let parentElement = document.querySelector('[' + DATA_ATTRIBUTE_NAME + '="' + parentId + '"]');
@@ -43,6 +48,7 @@ let QuestionParser = (function() {
                         chrome.runtime.sendMessage({questionList: [question], host: window.location.host, location: window.location}, console.log.bind(console, 'Response:'));
 
                         setTimeout(() => {
+                            let questionNode = document.getElementById(question.id);
                             questionNode.style.backgroundColor = '#FEF83C';
                             questionNode.style.color = 'black';
                         }, 1000);
@@ -158,30 +164,13 @@ let QuestionParser = (function() {
             // Ignore
             return null;
         } else {
-            // Start parsing
-            // let questionText = node.textContent;
-            // let rightMostIndex = node.textContent.length;
-            // while (node.textContent.lastIndexOf('?') > 0, rightMostIndex) {
-            //     let questionMarkIndex = node.textContent.lastIndexOf('?', rightMostIndex);
-            //     let nextQuestionMarkIndex = node.textContent.lastIndexOf('?', rightMostIndex-1);
-            // }
-
             let questions = getQuestionObjectsFromText(node.textContent);
-            addMutationFunctions(node, questions);
+            let newQuestions = questions.filter((question) => {
+                return QuestionRecordKeeper.addQuestion(question);
+            });
 
-            // let combinedHtml = questions.map((question) => { return question.wrappedHtml; }).join("");
-
-            // let wrappedNode = document.createElement('span');
-            // wrappedNode.id = Math.random().toString(31).substr(2, 16);
-            // wrappedNode.setAttribute('class', 'cosmic-question');
-            // wrappedNode.innerHTML = node.textContent;
-
-            // return [{
-            //     text: questionText,
-            //     wrappedNode: wrappedNode,
-            //     mutation: mutation
-            // }];
-            return questions;
+            addMutationFunctions(node, newQuestions); // Safe to call on empty array
+            return newQuestions;
         }
     }
 

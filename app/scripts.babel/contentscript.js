@@ -3,22 +3,10 @@
 // TODO: Use Browserify and make this not a global
 let QuestionParser = window.QuestionParser;
 let _ = window._;
-let questionIds = {};
+let BACKOFF_FACTOR = 1.8;
 
 function acceptNodeFn(node) {
     return /\?/.test(node.textContent)
-}
-
-function isNewQuestion(question) {
-    // let hash = Sha1.hash(window.location.host + question.text);
-    let key = window.location.host + question.text;
-    if (questionIds[key]) {
-        return false;
-    } else {
-        console.log('Ignoring duplicate question:', key);
-        questionIds[key] = question;
-        return true;
-    }
 }
 
 
@@ -31,24 +19,23 @@ function run(interval) {
     let node = walker.nextNode()
     let allQuestions = [];
     let mutations = [];
+    let numBefore = allQuestions.length;
     while (node) {
-        let questions = QuestionParser.getQuestionObjectsFromNode(node);
-        if (questions) {
-            allQuestions = allQuestions.concat(questions);
+        let newQuestions = QuestionParser.getQuestionObjectsFromNode(node);
+        if (newQuestions) {
+            allQuestions = allQuestions.concat(newQuestions);
         }
         node = walker.nextNode()
     }
+    let numAfter = allQuestions.length;
+    console.log('[cosmic-questions] Found ' + (numAfter - numBefore) + ' new questions after ' + interval + 'ms');
 
     allQuestions.map((question, index) => {
-        if (isNewQuestion(question)) {
-            console.log(index + '. ' + question.id + ': ' + question.text);
-            question.mutation();
-            question.testVisibilty();
-        }
+        question.mutation();
+        question.testVisibilty();
     });
 
-    console.log('Cosmic questions found ' + allQuestions.length + ' questions.');
-    setTimeout(run.bind(null, interval*1.8), interval * 1.8);
+    setTimeout(run.bind(null, interval * BACKOFF_FACTOR), interval * BACKOFF_FACTOR);
 }
 
 window.addEventListener('load', () => {
