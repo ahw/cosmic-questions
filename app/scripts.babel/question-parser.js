@@ -2,29 +2,43 @@ let _ = window._;
 
 let QuestionParser = (function() {
 
+    let DATA_ATTRIBUTE_NAME = 'data-cosmic-question-id';
+
+    function getUniqueId() {
+        // Actual guid
+        // return Math.random().toString(31).substr(2, 16).split("").map(function(ch) { return ch.charCodeAt(0).toString(16); }).join("");
+        // Whatever
+        return Math.random().toString(31).substr(2, 8);
+    }
+
     function addMutationFunctions(originalNode, questions) {
-        let parentElement = originalNode.parentElement;
-        questions.map((question, index) => {
+        let parentId = getUniqueId();
+        originalNode.parentElement.setAttribute(DATA_ATTRIBUTE_NAME, parentId);
+        questions.forEach((question, index) => {
             let mutation = () => {
-                // Carefully replace text originalNode content with mixed content
+                let parentElement = document.querySelector('[' + DATA_ATTRIBUTE_NAME + '="' + parentId + '"]');
+
+                // Carefully replace innerHTML of parent element with mixed content
                 parentElement.innerHTML = parentElement.innerHTML.replace(question.leadingContent + question.text + question.trailingContent, question.wrappedHtml);
 
                 let scrollListener = (e) => {
                     let questionNode = document.getElementById(question.id);
+                    if (questionNode === null) {
+                        console.warn('Could not find node with id: ' + question.id + ' Removing listener.');
+                        document.removeEventListener('scroll', debouncedListener);
+                    }
+
                     let top = questionNode.getBoundingClientRect().top;
-                    // console.log(`testing visibility for node with id ${question.id}...`);
                     if (top > -200 && top <= window.innerHeight * 0.75) {
-                        // Testing for -200 and not zero in order to
-                        // capture questions which appear at the top of
-                        // the page and are thus in view even before the
-                        // first scroll. This logic still won't capture
-                        // questions on pages so short that a scroll
-                        // isn't required, or on pages where the user
-                        // just simply didn't scroll at all.
+                        // Testing for -200 and not zero in order to capture
+                        // questions which appear at the top of the page and
+                        // are thus in view even before the first scroll.
+                        // This logic still won't capture questions on pages
+                        // so short that a scroll isn't required, or on
+                        // pages where the user just simply didn't scroll at
+                        // all.
 
-                        // console.log('removing debounced listener for node', questionNode);
-
-                        console.log('POST-ing (' + index + ') ' + question.text);
+                        // console.log('POST-ing (' + index + ') ' + question.text);
                         chrome.runtime.sendMessage({questionList: [question], host: window.location.host, location: window.location}, console.log.bind(console, 'Response:'));
 
                         setTimeout(() => {
@@ -37,6 +51,8 @@ let QuestionParser = (function() {
 
                 let debouncedListener = _.debounce(scrollListener, 300);
                 document.addEventListener('scroll', debouncedListener);
+
+                question.testVisibilty = scrollListener;
             };
 
             question.mutation = mutation;
@@ -44,7 +60,7 @@ let QuestionParser = (function() {
     }
 
     function createQuestionObject({text, leadingContent, trailingContent, isFullQuestion, textNodeStartIndex}) {
-        let id = Math.random().toString(31).substr(2, 8);
+        let id = getUniqueId();
         return {
             id,
             text,            // question text in isolation
@@ -123,7 +139,6 @@ let QuestionParser = (function() {
                     break;
             }
             --index;
-            // debugger;
         }
 
         return questions;
