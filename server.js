@@ -4,6 +4,11 @@ var bodyParser = require('body-parser');
 
 app.use(bodyParser.json()); // for parsing application/json
 
+app.get('/', function(request, response) {
+    response.send('hello');
+});
+
+
 app.post('/questions', function(request, response) {
 
     if (request.body.questionList) {
