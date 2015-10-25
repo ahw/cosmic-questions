@@ -12,7 +12,7 @@ let QuestionParser = (function() {
         return Math.random().toString(31).substr(2, 8);
     }
 
-    function addMutationFunctions(originalNode, questions) {
+    function addVisibilityListenerFunctions(originalNode, questions) {
         let parentId = originalNode.parentElement.getAttribute(DATA_ATTRIBUTE_NAME); // May already exist
         if (parentId === null) {
             parentId = getUniqueId();
@@ -20,16 +20,16 @@ let QuestionParser = (function() {
         }
 
         questions.forEach((question, index) => {
-            let mutation = () => {
+            let setupVisibilityListener = (debounceTime=300) => {
                 let parentElement = document.querySelector('[' + DATA_ATTRIBUTE_NAME + '="' + parentId + '"]');
 
                 // Carefully replace innerHTML of parent element with mixed content
                 parentElement.innerHTML = parentElement.innerHTML.replace(question.leadingContent + question.text + question.trailingContent, question.wrappedHtml);
 
                 let scrollListener = (e) => {
-                    let questionNode = document.getElementById(question.id);
+                    let questionNode = document.getElementById(question.htmlId);
                     if (questionNode === null) {
-                        console.warn('Could not find question ' + question.id + ': ' + question.text + ' Removing listener.');
+                        console.warn('Could not find question ' + question.htmlId + ': ' + question.text + ' Removing listener.');
                         document.removeEventListener('scroll', debouncedListener);
                         return;
                     }
@@ -46,36 +46,39 @@ let QuestionParser = (function() {
 
                         // console.log('POST-ing (' + index + ') ' + question.text);
                         chrome.runtime.sendMessage({questionList: [question], host: window.location.host, location: window.location}, console.log.bind(console, 'Response:'));
+                        document.removeEventListener('scroll', debouncedListener);
 
+                        // Highlight. TODO: Make this an option.
                         setTimeout(() => {
-                            let questionNode = document.getElementById(question.id);
+                            let questionNode = document.getElementById(question.htmlId);
                             questionNode.style.backgroundColor = '#FEF83C';
                             questionNode.style.color = 'black';
                         }, 1000);
-                        document.removeEventListener('scroll', debouncedListener);
                     }
                 }
 
-                let debouncedListener = _.debounce(scrollListener, 300);
+                let debouncedListener = _.debounce(scrollListener, debounceTime);
                 document.addEventListener('scroll', debouncedListener);
 
                 question.testVisibilty = scrollListener;
             };
 
-            question.mutation = mutation;
+            question.setupVisibilityListener = setupVisibilityListener;
         });
     }
 
     function createQuestionObject({text, leadingContent, trailingContent, isFullQuestion, textNodeStartIndex}) {
-        let id = getUniqueId();
+        let htmlId = getUniqueId();
+        let id = Sha1.hash(window.location.host + text);
         return {
             id,
+            htmlId,
             text,            // question text in isolation
             leadingContent,  // stuff before the question that isn't the question itself
             trailingContent, // stuff after the question that isn't the question itself
             isFullQuestion,  // did parsing stop mid-sentence?
             textNodeStartIndex,
-            wrappedHtml: `${leadingContent || ""}<span id="${id}" class="cosmic-question">${text}</span>${trailingContent || ""}`
+            wrappedHtml: `${leadingContent || ""}<span id="${htmlId}" class="cosmic-question">${text}</span>${trailingContent || ""}`
         };
     }
 
@@ -169,7 +172,7 @@ let QuestionParser = (function() {
                 return QuestionRecordKeeper.addQuestion(question);
             });
 
-            addMutationFunctions(node, newQuestions); // Safe to call on empty array
+            addVisibilityListenerFunctions(node, newQuestions); // Safe to call on empty array
             return newQuestions;
         }
     }
