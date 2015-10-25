@@ -17,8 +17,13 @@ let QuestionRecordKeeper = (function() {
         }
     }
 
+    function getNumQuestions() {
+        return Object.keys(uniqueQuestions).length;
+    }
+
     let exports = {
-        addQuestion
+        addQuestion,
+        getNumQuestions
     };
 
     return exports;
