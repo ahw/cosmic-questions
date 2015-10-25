@@ -10,6 +10,7 @@ console.log('Cosmic Questions Event Page for Browser Action');
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     console.log('Got message', message, 'from sender', sender);
+    sendResponse('immediate response');
 
     let xhr = new XMLHttpRequest();
     xhr.open('POST', 'http://localhost:3500/questions');
@@ -36,27 +37,4 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
     xhr.send(JSON.stringify(message));
-
-    // let items = {};
-    // if (message.questionList && message.host) {
-    //     message.questionList.map((question) => {
-    //         let key = Sha1.hash(message.host + question.text);
-    //         let value = {
-    //             text: question.text,
-    //             host: message.host
-    //         };
-
-    //         items[key] = value;
-
-    //         console.log(key + ' => ' + host + ' ' + text);
-    //         chrome.storage.local.set(items, () => {
-    //             if (chrome.runtime.lastError) {
-    //                 // return sendResponse({status: 500, 'Storage Error'});
-    //             }
-    //             // sendResponse({status: 200, 'OK'});
-    //         });
-    //     });
-    // } else {
-    //     return sendResponse({status: 400, message: 'Bad Request'});
-    // }
 });
