@@ -70,6 +70,7 @@ let QuestionParser = (function() {
     function createQuestionObject({text, leadingContent, trailingContent, isFullQuestion, textNodeStartIndex}) {
         let htmlId = getUniqueId();
         let id = Sha1.hash(window.location.host + text);
+        text = text.replace(/\n/g, ' ');
         return {
             id,
             htmlId,
