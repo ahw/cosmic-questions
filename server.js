@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var fs = require('fs');
+var _ = require('underscore');
 
 app.use(bodyParser.json()); // for parsing application/json
 
@@ -14,12 +15,13 @@ app.post('/questions', function(request, response) {
 
     if (request.body.questionList) {
         request.body.questionList.map(function(question) {
-            fs.appendFileSync('questions.log', JSON.stringify(question) + "\n");
+            var o = _.pick(question, ['id', 'text', 'trailingContent', 'leadingContent', 'isFullQuestion']);
+            fs.appendFileSync('questions.log', JSON.stringify(o) + "\n");
             console.log(request.body.host + ': ' + question.text);
             // console.log('     > ' + request.body.location.href);
         });
     }
-    response.send('perfect');
+    response.send('done');
 });
 
 app.listen(3500);

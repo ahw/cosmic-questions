@@ -17628,6 +17628,11 @@
           "resolved": "https://registry.npmjs.org/text-table/-/text-table-0.2.0.tgz"
         }
       }
+    },
+    "underscore": {
+      "version": "1.8.3",
+      "from": "underscore@*",
+      "resolved": "https://registry.npmjs.org/underscore/-/underscore-1.8.3.tgz"
     }
   }
 }
