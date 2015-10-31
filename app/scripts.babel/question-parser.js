@@ -121,7 +121,7 @@ let QuestionParser = (function() {
                     }
                     questionLength = questionMarkIndex - lastNonWhiteSpaceCharIndex + 1;
 
-                    if (/[\.\?!]/.test(text.charAt(index))) {
+                    if (/[\.\?!:]/.test(text.charAt(index))) {
                         let question = createQuestionObject({
                             text: text.substr(lastNonWhiteSpaceCharIndex, questionLength),
                             isFullQuestion: true,
