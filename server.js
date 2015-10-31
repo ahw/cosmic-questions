@@ -15,9 +15,9 @@ app.post('/questions', function(request, response) {
 
     if (request.body.questionList) {
         request.body.questionList.map(function(question) {
-            var o = _.pick(question, ['id', 'text', 'trailingContent', 'leadingContent', 'isFullQuestion']);
+            var o = _.pick(question, ['id', 'trimmedText', 'trailingContent', 'leadingContent', 'isFullQuestion']);
             fs.appendFileSync('questions.log', JSON.stringify(o) + "\n");
-            console.log(request.body.host + ': ' + question.text);
+            console.log(request.body.host + ': ' + question.trimmedText);
             // console.log('     > ' + request.body.location.href);
         });
     }
