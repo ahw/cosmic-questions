@@ -102,7 +102,13 @@ let QuestionParser = (function() {
                     lastNonWhiteSpaceCharIndex = null;
                     questionMarkIndex = null;
 
-                    if (text.charAt(index) === '?') {
+                    if (text.charAt(index) === '?' && /^\s*$/.test(text.charAt(index+1))) {
+                        // Assert: the thing immediately to the right of the
+                        // question mark is either the empty string (as
+                        // would be the case when index === text.length - 1)
+                        // or a whitespace character. This should hopefully
+                        // prevent picking up "questions" like
+                        // youtube.com?watch=123.
                         questionMarkIndex = index;
                         state = parsingStates.QUESTION;
                     } else {
