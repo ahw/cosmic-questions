@@ -25,7 +25,7 @@ function run({interval = 1000, backOffFactor = 1.8} = {}) {
         node = walker.nextNode()
     }
     let numAfter = allQuestions.length;
-    console.log('[cosmic-questions] Found ' + (numAfter - numBefore) + ' new questions after ' + interval + 'ms');
+    console.log('[cosmic-questions] Found ' + (numAfter - numBefore) + ' new questions after ' + Math.floor(interval/1000) + ' seconds');
 
     allQuestions.map((question, index) => {
         question.setupVisibilityListener(300); // 300 is the default if no arg passed
