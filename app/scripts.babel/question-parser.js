@@ -52,7 +52,10 @@ let QuestionParser = (function() {
                         setTimeout(() => {
                             let questionNode = document.getElementById(question.htmlId);
                             questionNode.style.backgroundColor = '#FEF83C';
-                            questionNode.style.color = 'black';
+                            if (questionNode.parentElement.nodeName !== 'A') {
+                                // Don't mess with anchor element styles
+                                questionNode.style.color = 'black';
+                            }
                         }, 1000);
                     }
                 }

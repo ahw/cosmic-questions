@@ -4,3 +4,7 @@
     /* color:white; */
     /* font-weight:bold; */
 }
+
+a .cosmic-question:hover {
+    text-decoration:underline;
+}
